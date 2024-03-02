@@ -115,22 +115,17 @@ export class ProductsService {
     try {
       if (images) {
         await queryRunner.manager.delete(ProductImage, { product: { id } }); //productId from param
-
         product.images = images.map((image) =>
           this.productImageReporitory.create({ url: image }),
         );
       } else {
       }
-
       await queryRunner.manager.save(product);
-
       await queryRunner.commitTransaction();
       await queryRunner.release();
-
       return this.findOnePlain(id);
     } catch (error) {
       await queryRunner.rollbackTransaction();
-
       await queryRunner.release();
       this.handleDBExceptios(error);
     }
