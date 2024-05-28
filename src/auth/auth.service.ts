@@ -34,7 +34,7 @@ export class AuthService {
 
       await this.userRepository.save(user);
       delete user.password;
-      return { ...user, token: this.getJwtToken({ email: user.email }) };
+      return { ...user, token: this.getJwtToken({ id: user.id }) };
     } catch (error) {
       this.handleErroDB(error);
     }
@@ -45,7 +45,7 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({
       where: { email },
-      select: { email: true, password: true },
+      select: { email: true, password: true, id: true }, // columnas recuperadas
     });
 
     if (!user) {
@@ -56,7 +56,8 @@ export class AuthService {
       //user.password is from data base
       throw new UnauthorizedException('Credentials are not valid (password)');
     }
-    return { ...user, token: this.getJwtToken({ email: user.email }) };
+
+    return { ...user, token: this.getJwtToken({ id: user.id }) };
   }
 
   ////// private functions
