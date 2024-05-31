@@ -13,6 +13,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { User } from './entities/user.entity';
 import { RawHeaders, GetUser } from './decorators';
 import { UserRoleGuard } from './guards/user-role.guard';
+import { RoleProtected } from './decorators/role-protected.decorator';
+import { ValidRoles } from './interfaces';
 
 @Controller('auth')
 export class AuthController {
@@ -43,10 +45,11 @@ export class AuthController {
       rawHeaders,
     };
   }
+  // @SetMetadata('roles', ['admin', 'super-user'])
 
   @Get('private2')
-  @SetMetadata('roles', ['admin', 'super-user']) //el decorador debe validar los roles para acceder a esta ruta
   @UseGuards(AuthGuard(), UserRoleGuard)
+  @RoleProtected(ValidRoles.superUser)
   privateRoute2(@GetUser() user: User) {
     return {
       ok: true,
